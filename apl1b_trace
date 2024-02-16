@@ -1,0 +1,18 @@
+ apl1b_trace←{
+     d←⊃⎕NGET'test1b.txt' 1
+     ⎕←d
+     digits←'one' 'two' 'three' 'four' 'five' 'six' 'seven' 'eight' 'nine'∘.⍷d  ⍝ 9 rows with 1 where each digit exists
+     ⍝ Multiple each row by digit number, then sum by columns and you get where digits start
+     numLoc←⊃+⌿(⍳9)×{digits[⍵;]}¨⍳9     ⍝ Where words start two1nine = 2 0 0 0 9 0 0 0
+     ⎕←'' ⋄ ⎕←numLoc
+     offsets←1+numLoc
+     ⎕←'' ⋄ ⎕←offsets
+     dataNums←{(⊂⍵),1↓(⍴⍵)⍴¨⎕D}¨d     ⍝ each element followed by numbers
+     subs←dataNums{⍺[⍵]}¨offsets    ⍝ put numbers in position of its word ('1'=one, '2'=two, ...)
+     ⎕←'' ⋄ ⎕←subs
+     sizes←⍴¨d               ⍝ Size of each matrix (n x n)
+     ⍝ rotate each row element by position number - abcd bcda 6666 dabc
+     ⍝ the pick the first character of each element -   ab6d - inserted 6 in correct position
+     ⎕←'' ⋄ ⎕←word2Num←{⊃¨(¯1+⍳(⊃sizes[⍵]))⌽¨⊃subs[⍵]}¨⍳⍴d
+     apl1a word2Num
+ 
