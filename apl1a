@@ -1,0 +1,4 @@
+ apl1a←{
+    apl1a_common⊃⎕NGET'data1a.txt' 1 ⍝ get data
+ }
+ 
