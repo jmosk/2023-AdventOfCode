@@ -1,0 +1,12 @@
+ apl1a_common←{
+
+     d←⍵                    ⍝ get data
+     i←{⍵∊⎕D}¨d             ⍝ find digits in each line of data
+     digits←i/¨d            ⍝ pull only digits from data
+     ld←⊣/¨digits           ⍝ get leftmost digits
+     rd←⊢/¨digits           ⍝ get rightmost digits
+     apairs←((⊣/),⊢/)¨digits ⍝ get left/right pairs as letters
+     npairs←⍎¨apairs        ⍝ Convert letter digits to a numeric
+     'Answer=',+/npairs     ⍝ return sum of all the pairs
+
+ }
