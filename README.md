@@ -1,9 +1,19 @@
+The purpose of these solutions is not to create the most efficient and complex one-line
+solutions to each puzzle but to provide a solution along with an explanation of each
+of the steps taken to get the correct answer. After I have solved each puzzle I look at
+solutions posted by other APL users and learn of the use of other primitives to perform
+various functions. That allows me to use some of these other primitives in future solutions.
+For example. "selective replacement" was not understood in the day 1 solution and later 
+integrated after a solution was found using other methodologies. Then on day 2, selective
+replacement was used to replace spaces inside a matrix with 0's so a row-wise addition
+could be used. 
+
 Code to solve AoC puzzles are of the form:
   apl#a - for part 1
-  apl1b - for part 2
-Verification of sample data os:
-  apl#a_trace - with each step displayed
-  apl$b_trace
+  apl1b - for part 2 - But part 2 is sometimes in the same file as part 1
+Verification of sample data is:
+  apl#a_trace - with results of each step displayed
+  apl#b_trace
 Data is:
   test#a.txt - sample data
   test#b.txt
