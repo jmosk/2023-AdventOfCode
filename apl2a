@@ -1,0 +1,95 @@
+ apl2a←{
+⍝
+⍝   Decide if 12 red, 13 green, and 14 blue contain these combinations
+⍝   Add up the game numbers that are valid. In this case it is 1+2+5 = 8
+⍝
+⍝   Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
+⍝   Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue
+⍝   Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red
+⍝   Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red
+⍝   Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green
+⍝
+⍝   We are going to create a list of game numbers where the number of
+⍝   any color exceeds the maximum allowed then remove these numbers
+⍝   from the list of row numbers. Add the numbers that are left and
+⍝   that is the answer.
+
+⍝   The first thing is to convert all the ':' and ';' characters in
+⍝   the file to ',' to make this a true CSV file.
+
+     d←⊃⎕NGET'data2a.txt' 1
+     ⍝ replace all colons, semicolons with commas
+     ⍝ and insert a comma before each color name
+     ((+⌿':' ';' ' blue' ' red' ' green'∘.⍷d)/¨d)←',' ⍝ 5 rows of masks, merged to a single mask where commas go
+     ⎕←'Created data2a.csv file, size(chars): ',(⊂d)⎕NPUT'data2a.csv' 1  ⍝ create new comma separated file
+
+⍝   Read the data as a CSV file and place a list of (Text Number) field
+⍝   designations at the end to ensure all data is converted properly. These
+⍝   are variable length lines of the same format:
+⍝       Game    Game#   #   Color # Color # Color ...
+     elim←⍬
+     d←(⎕CSV⍠'Ragged' 1)'data2a.csv'⍬(1,40⍴(4 1))  ⍝ <gsme #><#><color><#><color>...
+     ⍝⎕←'data' ⋄⎕←d
+     colorNames←'blue' 'red' 'green'∘.⍷d      ⍝ map where color names start
+     ⍝⎕←'colorNames' ⋄⎕←colorNames
+     colorNamesOffsets←+/¨colorNames      ⍝ vector element # where color names exist
+     ⍝⎕←'colorNamesOffsets' ⋄⎕←colorNamesOffsets
+     rowColNames←⍸colorNamesOffsets         ⍝ [color row col] of color names ⍴=(3 #rows #cols)
+     ⍝⎕←'rowColNames' ⋄⋄⋄⎕←rowColNames
+     blues←(1=⊃¨rowColNames)/rowColNames   ⍝ location of all word 'blue'
+     reds←(2=⊃¨rowColNames)/rowColNames
+     greens←(3=⊃¨rowColNames)/rowColNames
+     ⍝⎕←'blues' ⋄⎕←blues
+     brcNums←1↓¨blues                      ⍝ [row col] of all word 'blue'
+     rrcNums←1↓¨reds                       ⍝ [row col] of all word 'red'
+     grcNums←1↓¨greens                     ⍝ [row col] of all word 'green'
+     ⍝⎕←'blue name row col' ⋄⎕←brcNums
+     numBlues←¯1(+@2)¨brcNums             ⍝ [row col-1] is number of reds
+     numReds←¯1(+@2)¨rrcNums
+     numGreens←¯1(+@2)¨grcNums
+     ⍝⎕←'blue counts locations' ⋄⎕←numBlues
+     indexOverBlue←⍸d[numBlues]>14         ⍝ element numbers exceeding max blues
+     indexOverRed←⍸d[numReds]>12           ⍝ This contains the {row col]'s where
+     indexOverGreen←⍸d[numGreens]>13       ⍝ this game doesn't work
+     ⍝⎕←'failed blue indexes (>14)' ⋄⎕←indexOverBlue,'|[row col] of failed data ',numBlues[indexOverBlue]
+     ⍝⎕←'failed red (>12)' ⋄⎕←indexOverRed,'|[row col] ',numReds[indexOverRed]
+     ⍝⎕←'failed green (>13)' ⋄⎕←indexOverGreen,'|[row col] ',numGreens[indexOverGreen]
+     elim←elim,1↑¨brcNums[indexOverBlue]    ⍝ [row col] the row part is the game number
+     elim←elim,1↑¨rrcNums[indexOverRed]
+     elim←elim,1↑¨grcNums[indexOverGreen]
+     ⍝⎕←'line numbers eliminated ' ⋄⎕←elim
+     lines←⍳1↑⍴d                           ⍝ list of all line numbers ⍴d=[rows cols] - just get rows
+     lines[elim]←0                         ⍝ failed game numbers = 0 (remove bad games
+
+     ⎕←' ' ⋄ ⎕←'Answer part 1 = ',+/lines           ⍝ total of all line numbers is the answer
+
+     ⍝ Part 2
+     ⍝ Get maximum number of each color cube multiplied together for all games
+     ⍝ then add them all up for the answer
+     ⎕←' ' ⋄ ⎕←'Part 2' ⋄ ⎕←' '
+     ud←⊃¨d                              ⍝ 1st element of each column (1 letter, full #)
+     ⍝
+     blueNumMask←1⌽'b'∊¨ud                 ⍝ where to find blue numbers
+     redNumMask←1⌽'r'∊¨ud
+     greenNumMask←1⌽'g'∊¨ud
+⍝     ⎕←blueNumMask
+     blueNums←⊃¨blueNumMask/¨d              ⍝ all the numbers of blue cubes per line (row)
+     redNums←⊃¨redNumMask/¨d                ⍝ but there are spaces in the array among the digits
+     greenNums←⊃¨greenNumMask/¨d
+⍝     ⎕←blueNums
+     ((' '=⊃¨blueNums)/¨blueNums)←0          ⍝ fill in 0 for anything not a count of blue cubes
+     ((' '=⊃¨redNums)/¨redNums)←0
+     ((' '=⊃¨greenNums)/¨greenNums)←0
+⍝     ⎕←blueNums
+⍝     ⎕←⌈/blueNums                           ⍝ find the max cubes for each color
+⍝     ⎕←⌈/redNums
+⍝     ⎕←⌈/greenNums
+
+     ⍝ Put the blue, red, and green maximums per line, in a blue, red, green row, and max per line of data
+     ⍝ The answer is by multiplying each column (b x r x g) which is the "power" for each line
+     ⍝ then add all the powers together for all the lines.
+
+     ⎕←'Answer part 2 = ',+/×⌿(3,(1↑⍴d))⍴(⌈/blueNums),(⌈/redNums),(⌈/greenNums)
+
+
+ }
