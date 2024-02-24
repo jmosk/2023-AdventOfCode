@@ -1,12 +1,19 @@
-The purpose of these solutions is not to create the most efficient and complex one-line
+The purpose of these solutions is NOT to create the most efficient and complex one-line
 solutions to each puzzle but to provide a solution along with an explanation of each
 of the steps taken to get the correct answer. After I have solved each puzzle I look at
 solutions posted by other APL users and learn of the use of other primitives to perform
 various functions. That allows me to use some of these other primitives in future solutions.
-For example. "selective replacement" was not understood in the day 1 solution and later 
+For example. "selective replacement" was not understood in the day 1 solution and was later 
 integrated after a solution was found using other methodologies. Then on day 2, selective
 replacement was used to replace spaces inside a matrix with 0's so a row-wise addition
 could be used. 
+
+This set of solutions might be of interest to new APL users. First, the general way of
+approaching the solution is discussed. Then there is a step-by-step breakdown of how
+the solution is implemented. The apl##_trace version displays the output from each
+function performed along the way to the solution so the reader can follow along
+and understand what each step is doing and how the primitives are deriving the data
+shown.
 
 Code to solve AoC puzzles are of the form:
   apl#a - for part 1
