@@ -1,0 +1,106 @@
+ r←apl3a
+
+⍝ Day 3 - Find all numbers that are next to a special
+⍝ character and sum up thier values.Next to includes
+⍝ values that are diagonally touching the number.
+⍝ In the example below 114 and 58 are not part of the
+⍝ total.
+
+⍝ 467..114..
+⍝ ...*......
+⍝ ..35..633.
+⍝ ......#...
+⍝ 617*......
+⍝ .....+.58.
+⍝ ..592.....
+⍝ ......755.
+⍝ ...$.*....
+⍝ .664.598..
+
+⍝ This is going to be colved by adding up all the
+⍝ values then subtracting those values that are not
+⍝ next to a special character. This is easy to do with
+⍝ APL.
+
+⍝ We will create a sub-array around each special character
+⍝ and use it to invaldate numbers that are next to it
+⍝     1 1 1
+⍝     1 * 1
+⍝     1 1 1
+⍝ So a digit where any 1 is located is changed to 'x'.
+⍝ So numbers become X23, 1X3,12X in foram which is an
+⍝ invalid numeric string. We will use the ⎕VFI function
+⍝ to keep valid numbers around and remove all the poorly
+⍝ formatted ones. Then add up what is left and subtract it
+⍝ from the total and you have the answer the puzzle is
+⍝ seeking.
+
+ dWithCRs←⊃⎕NGET'data3a.txt'     ⍝ read as character data
+
+⍝ Convert the character data to a matrix. It is currently
+⍝ just a string of characters with embedded CRs. First
+⍝ determine the line size including the CR. This is used
+⍝ to convert the data into a matrix via '⍴'. The entire
+⍝ matrix is going to be surrounded by '.' characters so that
+⍝ the sub-array logic does not require a special case for
+⍝ edges. The box surrounding a number will always fit in this
+⍝ expanded matrix. So we will first change the CRs to a '.'
+⍝ as part of surrounding the matrix.
+
+⍝ Prepare the data for analysis
+ dWithoutCRs←dWithCRs
+ ⍝⎕←dWithoutCRs
+ mapCRs←(⎕UCS 10)∊¨dWithoutCRs    ⍝ where the CRs exist
+ indexCRs←⍸mapCRs                 ⍝ element number of each CR
+ lineSize←1↑indexCRs             ⍝ 1st index is the size of a line
+ (mapCRs/¨dWithoutCRs)←'.'      ⍝ convert CRs to '.'
+ d←((lineSize-1),lineSize)⍴dWithoutCRs ⍝ text string to a matri
+ ⍝⎕←'---------' ⋄ ⎕←d
+
+ mapSpecChars←~d∊'.',⎕D
+ (mapSpecChars/¨d)←'*'          ⍝ make all special chars a '*' for ease
+ ⍝⎕←'---------' ⋄ ⎕←d
+
+ (('.'∊¨d)/¨d)←' '            ⍝ convert '.' to spaces - spaces around numbers
+ ⍝⎕←'---------' ⋄ ⎕←d
+ ⍝ Matrix of data now ready to be processed
+
+ ⍝ Before calcating the sum, we need to remove
+ ⍝ special characters since ###* or *## looks invalid
+ temp←d
+ ((,mapSpecChars)/¨,temp)←' '
+ ⍝⎕←2⌷⎕VFI,temp
+ sumAll←+/⊃2⌷⎕VFI,temp      ⍝ add the digit strings
+ ⎕←(⎕UCS 13),'Sum of all numbers=',sumAll
+
+ ⍝ Find the locations of the special chars
+ idxStars←⍸'*'∊¨d     ⍝ find '*' then get index to each
+ ⍝⎕←'spcial chars at:',idxStars
+ subArrayOffset←(⊂(¯1 0 1)),(⊂(¯1 0 1)) ⍝ box around special char
+ idxBoxes←(⊂subArrayOffset)+¨idxStars
+ ⍝⎕←'index of each surrounding ox' ⋄ ⎕←idxBoxes
+ boxes←{⍵⌷d}¨idxBoxes      ⍝ boaex around special chars
+ ⍝⎕←'boxes around special chars' ⋄ ⎕←boxes
+ boxVect←,¨boxes
+ maskDigits←{⍵∊⎕D}¨boxVect  ⍝ digits around special chars
+ ⍝⎕←'digits around special chars' ⋄ ⎕←maskDigits
+ ((maskDigits)/¨boxVect)←'x'    ⍝ replace digits with 'x'
+ ⍝⎕←'updated boxes' ⋄ ⎕←boxVect
+ boxes←{3 3⍴⍵}¨boxVect            ⍝ raplacement subarrays
+ ⍝⎕←'replacement boxes' ⋄ ⎕←boxes
+
+ ⍝ Insert modified boxes into original data
+ ⍝ to invalidata numbers touching special chars
+ ⍝ Just the opposite of pulling out subarrays
+ ⍝ we put the updated subarrys (boxes) back where
+ ⍝ they go into the original data
+
+ {((⊃idxBoxes[⍵])⌷d)←⊃boxes[⍵]}¨⍳⍴boxes
+ ⍝⎕←'Updated original data' ⋄ ⎕←d
+ sumNoSpecChars←+/⊃2⌷⎕VFI,d
+ ⎕←'sum of numbers not touching special chars=',sumNoSpecChars
+ ⎕←'sum of all numbers minus sum not touching specials'
+ 'Answer=',sumAll-sumNoSpecChars
+
+ r←'--Done--'
+ 
