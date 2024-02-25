@@ -18,7 +18,7 @@ shown.
 This is a slow work in progress as I have time to work on the 2023 puzzles. But I thought
 it could be of interest to have fully documented solutions to the puzzles. 
 
-Code to solve AoC puzzles are of the form:
+Code to solve AoC puzzles are of the form:<br>
   apl#a - for part 1
   apl1b - for part 2 - But part 2 is sometimes in the same file as part 1
 Verification of sample data is:
