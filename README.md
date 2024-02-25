@@ -19,11 +19,11 @@ This is a slow work in progress as I have time to work on the 2023 puzzles. But 
 it could be of interest to have fully documented solutions to the puzzles. 
 
 Code to solve AoC puzzles are of the form:<br>
-  apl#a - for part 1
-  apl1b - for part 2 - But part 2 is sometimes in the same file as part 1
+<li> apl#a - for part 1
+<li>  apl1b - for part 2 - But part 2 is sometimes in the same file as part 1<br>
 Verification of sample data is:
-  apl#a_trace - with results of each step displayed
-  apl#b_trace
+<li>  apl#a_trace - with results of each step displayed
+<li>  apl#b_trace
 Data is:
   test#a.txt - sample data
   test#b.txt
