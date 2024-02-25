@@ -1,5 +1,5 @@
 The purpose of these solutions is NOT to create the most efficient and complex one-line
-solutions to each puzzle but to provide a solution along with an explanation of each
+solutions to each puzzle but to provide a detailed solution along with an explanation of each
 of the steps taken to get the correct answer. After I have solved each puzzle I look at
 solutions posted by other APL users and learn of the use of other primitives to perform
 various functions. That allows me to use some of these other primitives in future solutions.
@@ -14,6 +14,9 @@ the solution is implemented. The apl##_trace version displays the output from ea
 function performed along the way to the solution so the reader can follow along
 and understand what each step is doing and how the primitives are deriving the data
 shown.
+
+This is a slow work in progress as I have time to work on the 2023 puzzles. But I thought
+it could be of interest to have a fully documented solutions to the puzzles. 
 
 Code to solve AoC puzzles are of the form:
   apl#a - for part 1
