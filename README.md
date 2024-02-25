@@ -28,6 +28,6 @@ Code to solve AoC puzzles are of the form:<br>
 <li>  test#a.txt - sample data
 <li>test#b.txt
 <li> data#a.txt - AoC data to process
-<li>data#b.txt
+<li>data#b.txt - oftentimes data#a.txt is used for both parts
 </li>
   
