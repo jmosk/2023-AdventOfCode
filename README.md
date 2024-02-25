@@ -21,12 +21,13 @@ it could be of interest to have fully documented solutions to the puzzles.
 Code to solve AoC puzzles are of the form:<br>
 <li> apl#a - for part 1
 <li>  apl1b - for part 2 - But part 2 is sometimes in the same file as part 1<br>
-Verification of sample data is:
+<br>Verification of sample data is:
 <li>  apl#a_trace - with results of each step displayed
 <li>  apl#b_trace
-Data is:
-  test#a.txt - sample data
-  test#b.txt
-  data#a.txt - AoC data to process
-  data#b.txt
+<br><br>Data is:
+<li>  test#a.txt - sample data
+<li>test#b.txt
+<li> data#a.txt - AoC data to process
+<li>#b.txt
+</li>
   
