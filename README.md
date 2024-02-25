@@ -16,7 +16,7 @@ and understand what each step is doing and how the primitives are deriving the d
 shown.
 
 This is a slow work in progress as I have time to work on the 2023 puzzles. But I thought
-it could be of interest to have a fully documented solutions to the puzzles. 
+it could be of interest to have fully documented solutions to the puzzles. 
 
 Code to solve AoC puzzles are of the form:
   apl#a - for part 1
