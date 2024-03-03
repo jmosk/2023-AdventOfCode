@@ -13,7 +13,8 @@ solution, but then extracted the solution for each special character one at a ti
 These could have all been put in a single array and executed together instead of
 processing the same function for each special character. It is best to think
 differently in APL regarding what can be done in parallel, instead of doing
-sequentially. 
+sequentially. As an aside, at least in one case, I found that when I tried to
+execute a posted solution with the test data, it did not produce the correct result.
 
 First, the general way of approaching the solution is discussed. Then there is a
 step-by-step breakdown of how the solution is implemented. The apl##_trace version
