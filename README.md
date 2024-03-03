@@ -2,7 +2,11 @@ The purpose of these solutions is NOT to create the most efficient and complex o
 solutions to each puzzle but to provide a detailed solution along with an explanation of each
 of the steps taken to get the correct answer. Not being an advanced and skilled APL programmer
 I can see my solutions are not taking advantage of the power of various primitives. But,
-they do derive the correct solution to the puzzles solved. 
+they do derive the correct solution to the puzzles solved. My knowledge of APL is mostly
+the old traditional one. I learned APL on an IBM\1130 50+ years ago and read Ken Iverson's
+book back then. So I am not very up to speed on all the new functions Dyalog has added to 
+the language and their power. I still have my IBM Selectric Typewriter type ball with APL
+characters on it that I used on the 1130. 
 
 This set of solutions does not show the most efficient way of doing things in APL.
 One of the nice features of APL is performing things in parallel. Looking over
