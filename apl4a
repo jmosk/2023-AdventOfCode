@@ -1,0 +1,200 @@
+ apl4a
+
+ db←1           ⍝ debug flag - set to 1 to trace results
+ slow←0         ⍝ slow=1 use the slow method for part 2
+ test←1         ⍝ test=1 to use test instead of game data
+
+ ⍝ Best to run debug =1 along with ]box On -fns=on
+
+ ⍝ Part 1 is straight forward as APL provides a primative to find the union
+ ⍝ of two sets. So it finds the held numbers against the winning numbers
+ ⍝ to provide the winning numbers being held. From this we total the winners
+ ⍝ per card to get the answer. So part 1 mostly reformats the cards to use the
+ ⍝ union function.
+
+ ⍝ Part 2 was first solved in a straight forward fashion which implements the
+ ⍝ actual methodology. For example, with the test data, we start with the first
+ ⍝ set of cards: 1,2,3,4,5,6. We find they generate 4,2,2,1,0,0 new cards respectively.
+ ⍝ So the first set generates new sets of (2,3,4,5) (3,4) (4,5) (5) (0) (0). These
+ ⍝ 6 new sets are added to the list of card sets. The first set is removed (1,2,3,4,5,6),
+ ⍝ and the next set (2,3,4,5) is processed. This continues until the set of winners
+ ⍝ is all processed.
+
+ ⍝ This was found to take far too long on the game data. At the 24 hour point it was
+ ⍝ found that there was nearly 1 Million sets of cards. And ths number of sets was
+ ⍝ increasing. And at that point there were 1.2 Million cards already processed. So
+ ⍝ a new methodology had to be approached. The solution to the game data turns out
+ ⍝ to be in excess of 5M. So the slow method will tale several days to process allk
+ ⍝ the cards.
+
+ ⍝ The fast method starts from card 1 and determines how many new cards are created. The
+ ⍝ number of new cards is multiplied by the number of cards for each number. So if a
+ ⍝ new card is issued for card 10 which already has 5 cards allocated, then there are
+ ⍝ 5 new cards associated with card 10. This method only needs to process each card
+ ⍝ one time and is fast.
+
+ →(1+test)⌷gameData testData
+gameData:
+ d←⊃⎕NGET'data4a.txt' 1
+ →startPart1
+
+testData:
+ d←⊃⎕NGET'test4a.txt' 1
+
+startPart1:
+ ⎕←(⎕UCS 13),'Part 1'
+
+ db trace'data'
+ db trace d
+
+ ⍝ Find the : following the word 'Card ##⍎'. Get the index of the :
+ ⍝ and that is the number of characers at the start of each line
+ ⍝ we want to remove.
+ removedCardNum←{(⍸':'⍷¨⍵)↓⍵}¨d      ⍝ remove Card ##:
+
+ maskBar←{'|'⍷⍵}¨removedCardNum      ⍝ Change | to ∩ (the APL insersection function)
+ (maskBar/¨removedCardNum)←'∩'
+
+ commons←⍎¨removedCardNum            ⍝ find common elements (the intersection)
+ numCommon←⍴¨commons                 ⍝ how many common elements (winners)
+
+ t←⊃¨numCommon                       ⍝ t = vector of number of winners for each card
+ winners←(0≠t)/t                     ⍝ remove elements with no winners (remove 0's)
+
+ answer←+/2*¯1+¨winners
+
+ ⎕←'Part 1 answer',answer
+
+ ⍝ --------------Part 2----------------
+
+ ⎕←(⎕UCS 13),'Part 2'
+
+ →(1+slow)⌷fastMethod slowMethod
+
+  ⍝ --------------Part 2 fast method----------------
+
+fastMethod:
+
+ numWinners←t                        ⍝ save number of winners for each card number
+
+ db trace'Number of new cards per number',numWinners
+
+ cardsPerNum←(⍴numWinners)⍴1   ⍝ 1 card per number to start
+
+ idx←0
+
+loop:
+
+ idx←idx+1         ⍝ starting card number
+ db trace'index',idx
+ →⊃(1+idx=⍴numWinners)⌷next1 wrapUp     ⍝ exit if done or continue
+
+next1:
+ cardsIssued←(⍴numWinners)⍴0
+ whoGetsCards←idx+(⍳idx⌷numWinners)
+ db trace'who gets cards',whoGetsCards
+ →(1+0=idx⌷numWinners)⌷continue loop    ⍝ no cards - ignore
+
+continue:
+ {(⍵⌷cardsIssued)←1}¨whoGetsCards
+ db trace cardsPerNum,' | ',cardsIssued,' | ',idx⌷cardsPerNum
+
+ cardsIssued←cardsIssued×idx⌷cardsPerNum
+ db trace'cards issued'
+ db trace cardsIssued
+
+
+ cardsPerNum←cardsPerNum+cardsIssued
+
+ db trace cardsPerNum
+ db trace'-----------'
+ →loop
+
+wrapUp:
+ 'total cards issued per card number'
+ cardsPerNum
+ 'Part 2 answer',+/cardsPerNum
+
+ 'done'
+ →0
+
+
+⍝ ---------------Slow Method------------
+
+slowMethod:
+ ⎕←'This is te slow method of part 2'
+
+ numWinners←t                        ⍝ save number of winners for each card number
+
+ ⍝ We are going to encloe each card number as a 1 element
+ ⍝ vector. Then enclose a set of numbers to be processed.
+ ⍝ Processing each set will append yet another set of
+ ⍝ enclosed card numbers based on how many winnders are on
+ ⍝ each card. So each pass of procesing will work on the
+ ⍝ first eneclosed set of winners and this will be repeated
+ ⍝ until there are no more sets in the winner list.
+
+ ⍝ The first step will be to remove the set last processed.
+ ⍝ We will place this in a list of processed cards. Then
+ ⍝ the total number of cards saved in that list, is the
+ ⍝ answer desired.
+ ⍝
+ ⍝ Note that the ravel function ',' is used to convert digits
+ ⍝ into 1 character vectors.
+ ⍝
+
+ ⍝ Since the processing of the winner list first drops the previously
+ ⍝ processed set of data, we tag a dummy card 0 onto the winner list.
+
+ cardsDone←0                    ⍝ accumualte cards done here
+ lastWinnerListSize←0
+ winnerList←⊂{⊂,⍵}¨⍳⍴numWinners
+
+nextLoop2:
+
+ db trace'starting winner list'
+ db trace winnerList
+
+ ⍝ process the next set of cards. Put new cards created at the
+ ⍝ end of the winner list.
+
+
+ nextSet←⊃¨{⊃⍵}¨⊃winnerList     ⍝ extract the card numbers as scalars
+ winnerList←winnerList,{⊂¨(⍳t)⊆⍵+⍳t←⍵⌷numWinners}¨nextSet
+
+ db trace'becomes'
+ db trace winnerList
+ db trace'--------------------------------------------'
+
+ cardsDone←cardsDone+⍴¨1↑winnerList ⍝ save processed card
+
+ winnerList←1↓winnerList            ⍝ remove processed card from list
+
+checkIfDone2:
+ ⍝ if winnerList is empty we are done processing ii
+ :If (⍴winnerList)=0
+     →wrapUp2
+ :EndIf
+
+ ⍝ if the next element on the list is NULL, ignore it
+ :If (⍴⊃winnerList)=0
+     winnerList←1↓winnerList ⍝ ignore Nulls
+     →checkIfDone2
+ :EndIf
+
+ :If (lastWinnerListSize≠t)∧0=1000|t←⍴winnerList
+     ⎕←⊃¨(⍴winnerList)(⊃cardsDone)nextSet
+     lastWinnerListSize←t
+ :EndIf
+
+ →nextLoop2    ⍝ continue processing the winner list
+
+wrapUp2:
+
+ ⍝ the ⍴ of each set of cards is how many cards processed in
+ ⍝ rach pass then discarded. The answer to the puzzle is the
+ ⍝ total number of cards played.
+
+ ⎕←'Part 2 answer='
+ ⎕←cardsDone
+ 
