@@ -33,15 +33,16 @@ Code to solve AoC puzzles are of the form:<br>
 <li> apl#a - for part 1
 <li> apl#b - for part 2 - But part 2 is sometimes in the same file as part 1<br>
 
-<li> Note:<br>
-  Starting with apl4a, the trace function has been built into the APL source
-  code. At the top of the program is 'db' which is set to 1 to provide debug
-  or trace output. The APL function in this directory called trace implements
-  the optional display of data. The variable called 'test' is set to 1 to use
-  the game test data or set to 0 to use the game data. And there might be other
-  variables that can be set to operate different algorithms implemented. 
-
-<br>Verification of sample data is:
+<li> Note:
+</li>
+  <pre>
+Starting with apl4a, the trace function has been built into the APL source code. 
+at the top of the program is 'db' which is set to 1 to provide debug or trace output. 
+The APL function in this directory called trace implements the optional display of data. 
+The variable called 'test' is set to 1 to use the game test data or set to 0 to use the
+game data. And there might be other variables that can be set to operate different
+algorithms implemented. </pre>
+Verification of sample data is:
 <li>  apl#a_trace - with results of each step displayed
 <li>  apl#b_trace
 <br><br>Data is:
