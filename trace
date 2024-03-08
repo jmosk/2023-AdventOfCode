@@ -1,0 +1,11 @@
+debug trace msg
+    ⍝ Option debug of programs - Morten Kromberg (Dyalog CTO) inspired log function
+    ⍝ Based on →0 immediate return from tradfns, and →⍬ does nothing (NOP)
+
+    ⍝ 0 trace msg - does nothing
+    ⍝ 1 trace msg - will print the message
+
+    ⍝ Set debug On or Off to perform the trace function
+
+ →⊃(1+debug=0)⌷⍬ 0   ⍝ If debug = 0 then →0 (exit without printing) else continue (→⍬ = NOP)
+ ⎕←msg
