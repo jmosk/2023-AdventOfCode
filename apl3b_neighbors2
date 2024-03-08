@@ -1,0 +1,112 @@
+ apl3b_neighbors2←{
+ ⍝
+ ⍝ Each box containing two neighboring numbers is
+ ⍝ given to this function to pull the numbers out of
+ ⍝ the data.
+ ⍝
+ ⍝ call is: map_box neighbors idxBox  - 3 x 3 map and where it fits into data
+ ⍝ map is 3 x 3 with 0 and 1's
+ ⍝ idxBox is (r r r c c c) with rows and columns of the 3 x 3 matrix in data
+ ⍝
+     ⎕←(⎕UCS 13),'--------------------------------------------------',(⎕UCS 13)
+     ⎕←(⎕UCS 13),'Part 2 - Examine each special char with 2 neighbors',(⎕UCS 13)
+
+     ⍝
+     ⍝ Using the mask, the numbers which are neighbors are made invalid
+     ⍝ as they will be the remainder from the differenc with the neighbor and
+     ⍝ without the nieghbors.
+
+     ⍝ So first we create a version of the data with these neighbors
+     ⍝ invalidated
+
+
+     ⎕←'⍺' ⋄ ⎕←⍺
+     ⎕←(⎕UCS 13),'⍵='
+     ⎕←⍵
+     ⎕←'data' ⋄ ⎕←d
+     ⎕←(⎕UCS 13),'process box at'
+     ⎕←⍵
+     d2←d
+     ((d2='.')/¨d2)←' '       ⍝ dots to spaces
+     ((d2='*')/¨d2)←' '       ⍝ special chars to spaces - leave numbers only
+     d3←d2                    ⍝ save before we modify d2
+     ⎕←'data with numbers only' ⋄ ⎕←d2
+     ⎕←'index of special character neighbors'
+     ⎕←⍵
+     ⎕←'box around special char' ⋄ ⎕←(⊃⍵)⌷d
+     maskNeighbors←,⍺          ⍝ digits around special char
+     d2Vect←,(⊃⍵)⌷d2
+     ⍝ mask is 3 x 3 so make it into a vector
+     ((,⊃maskNeighbors)/d2Vect)←'x' ⍝ invalidate digits
+     boxToInsert←3 3⍴d2Vect              ⍝ return to 3 x 3 sub-matric
+     ((⊃⍵)⌷d2)←boxToInsert             ⍝ invalidate neighbors
+     ⎕←'invalidate neighboring numbers' ⋄ ⎕←d2
+
+     ⍝ Now that we have a copy of the data with the this set
+     ⍝ of neighbers invlaidate, we will process each row where
+     ⍝ there is invalid data, in order to extract the neighboring
+     ⍝ value.
+
+     ⍝ Extract the numbers in each row around the
+     ⍝ special character. Each of the 3 rows above,
+     ⍝ along, and below the special character are
+     ⍝ processed, to get the neighboring numbers.
+
+     ⍝ The function is called 3 times, once per row. The value
+     ⍝ returned on each execution is appended to each other to
+     ⍝ for a vector return value.
+
+     ⍝ must use ⊂ to send the matrix to process to avoid
+     ⍝ a RANK ERROR. The ⍺ of processRows is the ⊃d2
+
+     ⍝ We will process the three rows associated with the box
+     ⍝ around the special character (aka the sub-matrix).
+     ⍝ Those rows are the rrr portion of ⍵=(rrr ccc).
+     ⍝ But that is enclosed as rrr|ccc. So we must use ⊃ (first)
+     ⍝ to extract rrr | ccc then ⊂ again to get rrr.
+
+     ⍝ Passing the d2 and d3 matrix as we process the original data
+     ⍝ versis the data with neighbors invalidated
+
+     d2d3←⊂((⊂d2),⊂d3)
+     resultVect←d2d3 apl3b_processRows¨⊃⊃⍵      ⍝ updates results
+
+     ⍝ Calling process for each of the 3 rows, causes the result
+     ⍝ to be returned as a vector with 3 elements (1 for each row)
+     ⍝ The form will be any of these:
+     ⍝ <#><⍬><#>, <# 0 .. 0><# 0 ...>,<⍬>, <⍬><# #><⍬>, or <# # 0 ...><⍬><⍬>
+
+     ⎕←'---------------------------⍪---⍪--------------------------------'
+     ⎕←'processing of the row above, on, and below the special character' ⋄ ⎕←resultVect
+
+     ⍝ <if-true> (⊣⍣<true|false>) <if-false>
+     ⍝ returns the left side if the condition is True
+     ⍝ or else the right side
+
+     ⍝ If nothing found in a row, resultVect returns ⍬
+     ⍝ for that row. So ⍬≡ ⊃<one of the resultVect elements>
+     ⍝ is true if the row was empty. THe following returns 0
+     ⍝ if the row was empty and the data extracted if the row
+     ⍝ was non-zero.
+
+     zeroAndNums←{0(⊣⍣(⍬≡⊃⍵⌷resultVect))⊃⍵⌷resultVect}¨⍳3
+     ⎕←'extracted from rows'
+     ⎕←zeroAndNums
+
+     ⍝ Change 3 element vector to a single vector
+     ⍝ and unpack the contents.
+     zeroAndNums←⊃,/zeroAndNums
+     ⎕←'converted to a single vector',zeroAndNums
+     maskZandN←0≠zeroAndNums       ⍝ mask to remove 0's
+     ⎕←'mask to remove zeros',maskZandN
+     results←maskZandN/zeroAndNums   ⍝ leaves the two neighoring numbers
+
+     ⎕←'the two numbers are',results
+     answer←×/results
+
+     ⎕←'return the products of the two neighbors',answer
+
+     r←answer
+     r          ⍝ return the product of the 2 numbers in this box
+ }
+ 
