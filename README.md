@@ -34,7 +34,7 @@ Code to solve AoC puzzles are of the form:<br>
 <li> apl#b - for part 2 - But part 2 is sometimes in the same file as part 1<br>
 </li>
 <br>
-<p style="margin-left:10%; ">
+<p style="margin-left::200px; ">
   Note:<br>
   Starting with apl4a, the trace function has been built into the APL source
   code. At the top of the program is 'db' which is set to 1 to provide debug
