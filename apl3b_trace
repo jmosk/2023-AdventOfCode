@@ -1,0 +1,142 @@
+ r←apl3b_trace
+⍝
+⍝ This puzzle uses the same set of data as APL3A and asks you to find where
+⍝ there are only two numbers touching a special character, then multiply
+⍝ these two numbers together and add them to the value generated from
+⍝ other two number pairs next to special characters.
+
+⍝ In a similar way to APL3a (part 1), we will create a 3 x 3 sub-array
+⍝ arround each special character and use this to determine if there
+⍝ are exactly two neighbors around this special character. We will create
+⍝ a list of where those paticular special characters are located. Using
+⍝ that data, we will word to extract the string of digits (or single digit)
+⍝ that is next to the special character so we can multiple the two
+⍝ numbers together to generate the answer the puzzle seaks.
+
+ ⍝ Thi first part is just like APL3a. Extract 3 x 3 boxes around
+ ⍝ each special character.
+
+ dWithCRs←⊃⎕NGET'test3a.txt'     ⍝ read as character data
+ ⍝ dWithCRs←⊃⎕NGET'data3a.txt'
+
+ ⎕←(⎕UCS 13),'-----------------------------------------------',⎕UCS 13
+ ⎕←(⎕UCS 13),'Part 1 - find special chars with only 2 numbers',⎕UCS 13
+
+
+ ⍝ Prepare the data for analysis
+ dWithoutCRs←dWithCRs
+ mapCRs←(⎕UCS 10)∊¨dWithCRs    ⍝ where the CRs exist
+ indexCRs←⍸mapCRs                 ⍝ element number of each CR
+ lineSize←1↑indexCRs             ⍝ 1st index is the size of a line
+ (mapCRs/¨dWithoutCRs)←'.'      ⍝ convert CRs to '.'
+ d1←((lineSize-1),lineSize)⍴dWithoutCRs ⍝ text string to a matrix
+
+ ⍝ The following lines, ommented out, modify   the test data in
+ ⍝ order to check a test case not appearing in the test date.
+ ⍝ It will test a row with 2 neighbors of the form ###*###
+ ⍝      test 123*456
+
+⍝ (2⌷d1)←'..123*456.7'
+⍝ (1⌷d1)←11⍴'.'
+⍝ (3⌷d1)←11⍴'.'
+
+ ⍝ ------------------------------
+
+ ⎕←'---------' ⋄ ⎕←d1    ⍝ show the original data to process
+
+ mapSpecChars←~d1∊'.',⎕D
+ d←d1
+
+ (mapSpecChars/¨d)←'*'          ⍝ make all special chars a '*' for ease
+ ⎕←'---------' ⋄ ⎕←d
+
+
+
+ ⍝ Find the locations of the special chars
+ idxStars←⍸'*'∊¨d     ⍝ find '*' then get index to each
+ ⎕←'spcial chars at:'
+ ⎕←idxStars
+ subArrayOffset←(⊂(¯1 0 1)),(⊂(¯1 0 1)) ⍝ box around special char
+ idxBoxes←(⊂subArrayOffset)+¨idxStars
+ ⎕←'index of each surrounding box' ⋄ ⎕←idxBoxes
+ boxes←{⍵⌷d}¨idxBoxes      ⍝ boaex around special chars
+ ⎕←'boxes around special chars' ⋄ ⎕←boxes
+ boxVect←,¨boxes
+ maskDigits←{⍵∊⎕D}¨boxVect  ⍝ digits around special chars
+ ⎕←'digits around special chars' ⋄ ⎕←maskDigits
+ ((maskDigits)/¨boxVect)←1    ⍝ replace digits with '1'
+ boxes←{3 3⍴⍵}¨boxVect            ⍝ raplacement subarrays
+ ⎕←'digits around special chars' ⋄ ⎕←boxes
+ maskDots←{⍵∊d}¨boxVect
+ ((maskDots)/¨boxVect)←0
+ boxes←{3 3⍴⍵}¨boxVect
+ ⎕←'digits around special chara' ⋄ ⎕←boxes
+
+ ⍝ Next - Determine which special characters have two numbers
+ ⍝ touching them.
+
+⍝ The psttern of 1's around the special characters indicates
+⍝ how many numbers are around them. We are only inteested in those
+⍝ special characters having 3 neighbors.  Total up the value of the
+⍝ three rows of values and it tells you how mnay neighboring numbers
+⍝ there are arond the special charactsrs
+
+⍝ 000 - 0   011 - 1   110 - 1
+⍝ 001 - 1   100 - 1   111 - 1
+⍝ 010 - 1   101 - 2
+
+ patterns←(0 0 0)(0 0 1)(0 1 0)(0 1 1)(1 0 0)(1 0 1)(1 1 0)(1 1 1)
+ counts←0 1 1 1 1 2 1 1
+
+ ⍝ Each row of the 3 x 3 box is one of the 8 patterns. The particular
+ ⍝ pattern tells us how many numbers touch this row. Adding up all
+ ⍝ 3 rows tells us how many numbers are around this special character.
+ ⍝ So we convert the digits in each row as a binary number and use
+ ⍝ that as the index into the count associated with that pattern.
+ ⍝ The sum of the counts is the total number of numbers touching the
+ ⍝ special character. Note that the binary conversion primative goes
+ ⍝ down rows. So we first need to transpose the matix so the conversion
+ ⍝ from binary to decimal is by row.
+ idxCounts←{2⊥⍉⍵}¨boxes          ⍝ binary conversioon of each row
+ ⎕←'binary value of each row indicates which of 8 possible patterns'
+ ⎕←idxCounts
+ idxCounts←1+idxCounts           ⍝ add 1 to make it an index to counts
+ numsInRows←{{⍵⌷counts}⍵⌷idxCounts}¨⍳⍴boxes
+ ⎕←'Use the pattern number to determine how many numbers hit each row'
+ ⎕←numsInRows
+ numsInBoxes←+/¨numsInRows   ⍝ how many numbers around each box
+ ⎕←'how many numbers are around each box'
+ ⎕←numsInBoxes
+ boxesToConsider←numsInBoxes=2
+ mapBoxesToProcess←boxes[⍸boxesToConsider]
+ ⎕←'boxes with two numbers around them:' ⋄ ⎕←mapBoxesToProcess
+ idxSpecCharsToProcess←(numsInBoxes=2)/idxStars
+ ⎕←'indexes of special characters to consider in answer'
+ ⎕←idxSpecCharsToProcess
+ ⎕←'indexes of boxes around special char to condier'
+ boxesToProcess←boxesToConsider/idxBoxes
+ ⎕←boxesToProcess
+
+
+ ⍝ 'idxSpecCharsToProcess' now has the locations (row col) of each
+ ⍝ special character surrounded by 2 numbers. Now to extract those
+ ⍝ 2 numbers from the original data.
+
+ ⎕←(⎕UCS 13),'Part 2 - Extract numbers around selected special char',⎕UCS 13
+
+ ⍝ for each map of digits in a 3 x 3 box around a special character
+ ⍝ process the rows of the box (r r r c c c)
+ ⍝ ⍴ boxesToProcess is the # of boxes with 2 numbers to process
+ ⍝ so we pass ⍳ of that for box 1, then 2, etc.
+
+ answerVect←{(⍵⌷mapBoxesToProcess)apl3b_neighbors2 ⍵⌷boxesToProcess}¨⍳⍴boxesToProcess
+
+ ⎕←'vector of products of where special char has two neighbors'
+ ⎕←answerVect                    ⍝ vector of product of each neighbor
+
+ answer←+/answerVect             ⍝ answer is the sum of all products
+
+ 'answer=',answer
+
+ r←'Done'
+ 
