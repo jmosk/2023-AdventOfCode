@@ -1,0 +1,43 @@
+ apl3b_processRows2←{
+
+ ⍝ call is '⊂d2d3 processRows <row number>' where d2 is a 3 x 3
+ ⍝ sub-matrix where the neighbors have been made invalid and
+ ⍝ d3 is a 3 x 3 matrix with the original numbers with only
+ ⍝ spaces. d2d3 is sent as ⊂(d2) and ⊂(d3) all further enclosed
+ ⍝ with ⊂. So ⍺ is 2 elements where each element contains a
+ ⍝ 3 x 3 matrix. We extract the original d2 and d3 to start.
+ ⍝ This is how we pass mutliple matrices between functions.
+
+ ⍝ This will be called for each of the 3 rows of the 3 x 3
+ ⍝ sub-matrix around the special characters
+
+ ⍝ this processes one row of the 3 x 3 sub-matrix
+ ⍝ note the pattern 1 0 1 will return both neighbors
+ ⍝ as (### 0 ###) at one time while 1 0 0, 1 1 0,
+ ⍝ 0 1 0, 0 1 1, 0 0 1
+ ⍝ will each return a pair of (### 0) or (0 ###)
+
+     ⎕←'----------------------------------------------------------------',⎕UCS 13
+     ⎕←'Part 3 - process 1 of the 3 rows for the neighbor being examined',⎕UCS 13
+
+     d2←⊃1⌷⍺          ⍝ restore d2 from neighbors (invalid neighbors)
+     d3←⊃2⌷⍺          ⍝ restore d3 from neighbors (original data)
+     ⎕←(⎕UCS 13),'process one set of neighbors'
+
+     ⎕←'row # being processed',⍵
+     ⎕←'data in row' ⋄ ⎕←⍵⌷d2
+
+     rowWithoutNeighbor←⊃2⌷⎕VFI ⍵⌷d2   ⍝ numbers other than neighbor in row
+     ⎕←(⎕UCS 13),'row without neighbors' ⋄ ⎕←rowWithoutNeighbor
+
+     rowAllValues←⊃2⌷⎕VFI ⍵⌷d3        ⍝ all numbers in row (with neighbor(s)
+     ⎕←'row with all numbers' ⋄ ⎕←rowAllValues
+
+   ⍝ return to difference (all - <not neighbor> = neighbor value)
+
+     result←rowAllValues-rowWithoutNeighbor   ⍝ returns neighbor value(s)
+     ⎕←'neighbor valus(s):',result
+
+     result       ⍝ return result.
+ }
+ 
